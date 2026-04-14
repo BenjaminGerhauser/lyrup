@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500" fill="none"><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description><dc:creator>RealFaviconGenerator</dc:creator><dc:source>https://realfavicongenerator.net</dc:source></rdf:Description></rdf:RDF></metadata><circle cx="250" cy="250" r="250" fill="#0B0F1A"></circle><circle cx="250" cy="250" r="180" fill="url(#lyrupGlow)"></circle><path d="M 250 370 L 190 340 L 190 160 L 250 190 Z" fill="#0E7490"></path><path d="M 250 370 L 310 340 L 310 160 L 250 190 Z" fill="#0891B2"></path><path d="M 250 190 L 310 160 L 250 130 L 190 160 Z" fill="#06B6D4"></path><g stroke="#22D3EE" stroke-width="2.5" stroke-linecap="round" fill="none">
+    <path d="M 190 280 L 250 310 L 310 280"></path>
+    <path d="M 190 220 L 250 250 L 310 220"></path>
+  </g><g stroke="#22D3EE" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    <path d="M 250 370 L 190 340 L 190 160 L 250 130 L 310 160 L 310 340 Z"></path>
+    <path d="M 190 160 L 250 190 L 310 160"></path>
+    <line x1="250" y1="190" x2="250" y2="370"></line>
+  </g></svg>
