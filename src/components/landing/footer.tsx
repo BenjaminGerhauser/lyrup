@@ -16,7 +16,7 @@ export function Footer() {
               Lyrup
             </span>
             <span className="text-sm text-lyrup-text-muted">
-              Hecho en Argentina para emprendedores 3D de toda Latinoamérica.
+              Hecho en Argentina para emprendedores 3D argentinos.
             </span>
           </div>
 

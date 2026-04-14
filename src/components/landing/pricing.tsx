@@ -93,9 +93,9 @@ export function Pricing() {
           ))}
         </div>
 
-        <p className="mt-10 text-center text-sm text-lyrup-text-muted">
+        {/* <p className="mt-10 text-center text-sm text-lyrup-text-muted">
           Pro cuesta menos que un kilo de PLA. Si Lyrup te ayuda a cotizar bien UNA pieza, ya se pagó solo.
-        </p>
+        </p> */}
       </div>
     </section>
   )

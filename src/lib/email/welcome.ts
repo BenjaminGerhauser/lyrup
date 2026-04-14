@@ -20,7 +20,7 @@ export async function sendWelcomeEmail(email: string) {
           Mientras tanto, una pregunta: <strong>¿Cuál es tu mayor dolor al cotizar impresiones 3D?</strong> Respondé este email — lo leemos todo.
         </p>
         <p style="font-size: 14px; color: #6B7280;">
-          Hecho en Argentina para emprendedores 3D de toda Latinoamérica.
+          Hecho en Argentina para emprendedores 3D argentinos.
         </p>
       </div>
     `,
