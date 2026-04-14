@@ -23,7 +23,7 @@ export const TIERS: PricingTier[] = [
   },
   {
     name: 'Pro',
-    price: 2500,
+    price: 19900,
     currency: 'ARS',
     period: 'mes',
     features: [
@@ -39,7 +39,7 @@ export const TIERS: PricingTier[] = [
   },
   {
     name: 'Farm',
-    price: 12000,
+    price: 49900,
     currency: 'ARS',
     period: 'mes',
     features: [
