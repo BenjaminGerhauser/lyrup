@@ -107,73 +107,104 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ─────────────────────────────────────────────────────────────────────────
+   Lyrup palette mapped onto shadcn `:root` oklch tokens (dark-only app).
+   Landing components use explicit `lyrup-*` Tailwind classes — they are
+   NEVER affected by these tokens. Dashboard/auth components inherit these.
+   Hex ↔ oklch reference:
+     #0B0F1A → oklch(0.12 0.020 248)   lyrup-bg
+     #111827 → oklch(0.17 0.018 248)   lyrup-bg-elevated
+     #1F2937 → oklch(0.23 0.016 248)   lyrup-bg-subtle
+     #374151 → oklch(0.32 0.014 248)   lyrup-border
+     #E5E7EB → oklch(0.92 0.003 248)   lyrup-text
+     #F9FAFB → oklch(0.98 0.002 248)   lyrup-text-heading
+     #9CA3AF → oklch(0.67 0.007 248)   lyrup-text-secondary
+     #06B6D4 → oklch(0.69 0.152 211)   lyrup-cyan
+     #EF4444 → oklch(0.577 0.245 27)   lyrup-error
+   ───────────────────────────────────────────────────────────────────────── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  /* Surfaces */
+  --background:          oklch(0.12 0.020 248);
+  --foreground:          oklch(0.92 0.003 248);
+  --card:                oklch(0.17 0.018 248);
+  --card-foreground:     oklch(0.92 0.003 248);
+  --popover:             oklch(0.17 0.018 248);
+  --popover-foreground:  oklch(0.92 0.003 248);
+
+  /* Brand primary — lyrup-cyan */
+  --primary:             oklch(0.69 0.152 211);
+  --primary-foreground:  oklch(0.12 0.020 248);
+
+  /* Subtle surfaces */
+  --secondary:           oklch(0.23 0.016 248);
+  --secondary-foreground:oklch(0.92 0.003 248);
+  --muted:               oklch(0.23 0.016 248);
+  --muted-foreground:    oklch(0.67 0.007 248);
+  --accent:              oklch(0.23 0.016 248);
+  --accent-foreground:   oklch(0.92 0.003 248);
+
+  /* State */
+  --destructive:         oklch(0.577 0.245 27.325);
+
+  /* Chrome */
+  --border:              oklch(0.32 0.014 248);
+  --input:               oklch(0.32 0.014 248);
+  --ring:                oklch(0.69 0.152 211);
+
+  /* Charts (keep neutral grey scale) */
+  --chart-1:             oklch(0.87 0 0);
+  --chart-2:             oklch(0.67 0.007 248);
+  --chart-3:             oklch(0.439 0 0);
+  --chart-4:             oklch(0.371 0 0);
+  --chart-5:             oklch(0.23 0.016 248);
+
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Sidebar (mirrors main surfaces) */
+  --sidebar:                  oklch(0.17 0.018 248);
+  --sidebar-foreground:       oklch(0.92 0.003 248);
+  --sidebar-primary:          oklch(0.69 0.152 211);
+  --sidebar-primary-foreground:oklch(0.12 0.020 248);
+  --sidebar-accent:           oklch(0.23 0.016 248);
+  --sidebar-accent-foreground:oklch(0.92 0.003 248);
+  --sidebar-border:           oklch(0.32 0.014 248);
+  --sidebar-ring:             oklch(0.69 0.152 211);
 }
 
+/* Lyrup is a dark-only app — no .dark toggle needed.
+   Mirror :root so any code that references .dark still works correctly. */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background:          oklch(0.12 0.020 248);
+  --foreground:          oklch(0.92 0.003 248);
+  --card:                oklch(0.17 0.018 248);
+  --card-foreground:     oklch(0.92 0.003 248);
+  --popover:             oklch(0.17 0.018 248);
+  --popover-foreground:  oklch(0.92 0.003 248);
+  --primary:             oklch(0.69 0.152 211);
+  --primary-foreground:  oklch(0.12 0.020 248);
+  --secondary:           oklch(0.23 0.016 248);
+  --secondary-foreground:oklch(0.92 0.003 248);
+  --muted:               oklch(0.23 0.016 248);
+  --muted-foreground:    oklch(0.67 0.007 248);
+  --accent:              oklch(0.23 0.016 248);
+  --accent-foreground:   oklch(0.92 0.003 248);
+  --destructive:         oklch(0.577 0.245 27.325);
+  --border:              oklch(0.32 0.014 248);
+  --input:               oklch(0.32 0.014 248);
+  --ring:                oklch(0.69 0.152 211);
+  --chart-1:             oklch(0.87 0 0);
+  --chart-2:             oklch(0.67 0.007 248);
+  --chart-3:             oklch(0.439 0 0);
+  --chart-4:             oklch(0.371 0 0);
+  --chart-5:             oklch(0.23 0.016 248);
+  --sidebar:                  oklch(0.17 0.018 248);
+  --sidebar-foreground:       oklch(0.92 0.003 248);
+  --sidebar-primary:          oklch(0.69 0.152 211);
+  --sidebar-primary-foreground:oklch(0.12 0.020 248);
+  --sidebar-accent:           oklch(0.23 0.016 248);
+  --sidebar-accent-foreground:oklch(0.92 0.003 248);
+  --sidebar-border:           oklch(0.32 0.014 248);
+  --sidebar-ring:             oklch(0.69 0.152 211);
 }
 
 @layer base {
