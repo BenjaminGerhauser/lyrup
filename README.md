@@ -1,3 +1,15 @@
+# Lyrup
+
+Cotizador inteligente para emprendedores de impresion 3D.
+
+## Docs
+
+- [Deployment guide (Vercel + env vars + lyrup.com domain)](docs/DEPLOYMENT.md)
+- [RLS smoke test runbook (2-user cross-tenant isolation)](docs/RLS_SMOKE_TEST.md)
+- [Environment variables template](.env.example)
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

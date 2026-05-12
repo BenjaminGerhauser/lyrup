@@ -1,3 +1,4 @@
+import { LandingHeader } from '@/components/landing/header'
 import { Hero } from '@/components/landing/hero'
 import { Problems } from '@/components/landing/problems'
 import { Solution } from '@/components/landing/solution'
@@ -13,6 +14,7 @@ export const revalidate = 60
 export default function LandingPage() {
   return (
     <main className="flex flex-col">
+      <LandingHeader />
       <Hero />
 
       <RevealWrapper>
