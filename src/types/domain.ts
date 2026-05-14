@@ -1,7 +1,9 @@
 /**
- * Domain types matching the Sprint-0 DB schema.
+ * Domain types matching the DB schema (Sprint 0 → Sprint 2).
  * Derived from Database interface in lib/supabase/types.ts.
  */
+
+import type { CostBreakdown } from './calculator'
 
 export interface User {
   id: string
@@ -36,6 +38,8 @@ export interface Printer {
   life_hours_estimate: number
   nozzle_diameter: number
   accumulated_hours: number
+  // Sprint 2 additions
+  purchase_date: string | null
 }
 
 export interface Material {
@@ -54,11 +58,14 @@ export interface Material {
   nozzle_temp: number | null
 }
 
+export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected'
+
 export interface Quote {
   id: string
   user_id: string
+  client_id: string | null
   title: string
-  status: 'draft' | 'sent' | 'accepted' | 'rejected'
+  status: QuoteStatus
   total_ars: number | null
   notes: string | null
   created_at: string
@@ -75,6 +82,32 @@ export interface QuoteItem {
   quantity: number
   subtotal_ars: number | null
   created_at: string
+  // Sprint 2 additions
+  printer_id: string | null
+  material_id: string | null
+  cost_breakdown: CostBreakdown | null
+  gcode_filename: string | null
+  // Optional embeds resolved by getQuote. Null when the FK is null
+  // (printer/material was deleted — ON DELETE SET NULL).
+  printer?: { id: string; name: string } | null
+  material?: { id: string; name: string } | null
+}
+
+export interface Client {
+  id: string
+  user_id: string
+  name: string
+  whatsapp: string
+  email: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+/** Quote with its items (and optionally its client) — used in detail/list views. */
+export interface QuoteWithItems extends Quote {
+  items: QuoteItem[]
+  client: Client | null
 }
 
 export interface RefPrinterModel {

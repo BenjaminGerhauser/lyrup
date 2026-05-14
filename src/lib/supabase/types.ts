@@ -76,6 +76,8 @@ export interface Database {
           life_hours_estimate: number
           nozzle_diameter: number
           accumulated_hours: number
+          // Sprint 2 additions
+          purchase_date: string | null
         }
         Insert: {
           id?: string
@@ -91,6 +93,8 @@ export interface Database {
           life_hours_estimate?: number
           nozzle_diameter?: number
           accumulated_hours?: number
+          // Sprint 2 additions
+          purchase_date?: string | null
         }
         Update: {
           id?: string
@@ -105,6 +109,8 @@ export interface Database {
           life_hours_estimate?: number
           nozzle_diameter?: number
           accumulated_hours?: number
+          // Sprint 2 additions
+          purchase_date?: string | null
         }
         Relationships: []
       }
@@ -160,30 +166,36 @@ export interface Database {
           id: string
           user_id: string
           title: string
-          status: string
+          status: 'draft' | 'sent' | 'accepted' | 'rejected'
           total_ars: number | null
           notes: string | null
           created_at: string
           updated_at: string
+          // Sprint 2 additions
+          client_id: string | null
         }
         Insert: {
           id?: string
           user_id: string
           title: string
-          status?: string
+          status?: 'draft' | 'sent' | 'accepted' | 'rejected'
           total_ars?: number | null
           notes?: string | null
           created_at?: string
           updated_at?: string
+          // Sprint 2 additions
+          client_id?: string | null
         }
         Update: {
           id?: string
           user_id?: string
           title?: string
-          status?: string
+          status?: 'draft' | 'sent' | 'accepted' | 'rejected'
           total_ars?: number | null
           notes?: string | null
           updated_at?: string
+          // Sprint 2 additions
+          client_id?: string | null
         }
         Relationships: []
       }
@@ -198,6 +210,11 @@ export interface Database {
           quantity: number
           subtotal_ars: number | null
           created_at: string
+          // Sprint 2 additions
+          printer_id: string | null
+          material_id: string | null
+          cost_breakdown: Record<string, number> | null
+          gcode_filename: string | null
         }
         Insert: {
           id?: string
@@ -209,6 +226,11 @@ export interface Database {
           quantity?: number
           subtotal_ars?: number | null
           created_at?: string
+          // Sprint 2 additions
+          printer_id?: string | null
+          material_id?: string | null
+          cost_breakdown?: Record<string, number> | null
+          gcode_filename?: string | null
         }
         Update: {
           id?: string
@@ -219,6 +241,43 @@ export interface Database {
           unit_price_ars?: number | null
           quantity?: number
           subtotal_ars?: number | null
+          // Sprint 2 additions
+          printer_id?: string | null
+          material_id?: string | null
+          cost_breakdown?: Record<string, number> | null
+          gcode_filename?: string | null
+        }
+        Relationships: []
+      }
+      clients: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          whatsapp: string
+          email: string | null
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          whatsapp: string
+          email?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          whatsapp?: string
+          email?: string | null
+          notes?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
