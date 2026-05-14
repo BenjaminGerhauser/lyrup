@@ -159,20 +159,34 @@ function extractPrusa(lines: string[], diameter: number, density: number): Parti
   let filamentType: string | null = null
   let filamentBrand: string | null = null
 
+  // Permissive regexes covering both PrusaSlicer (`; estimated printing time (normal mode) = …`)
+  // and OrcaSlicer 2.x (`; total estimated time: 2h 13m 24s`, `; total filament used [mm] = …`).
+  const TIME_RE = /^;\s*(?:total\s+estimated\s+time|estimated\s+(?:printing\s+)?time(?:\s*\([^)]*\))?)\s*[=:]\s*(.+)/i
+  const FILAMENT_MM_RE = /^;\s*(?:total\s+)?filament(?:\s+used|\s+length)\s*\[mm\]\s*[=:]\s*([\d.]+)/i
+  const FILAMENT_G_RE = /^;\s*(?:total\s+)?filament\s+used\s*\[g\]\s*[=:]\s*([\d.]+)/i
+  const LAYERS_RE = /^;\s*(?:total\s+)?layers?\s+count\s*[=:]\s*(\d+)/i
+
   for (const line of lines) {
     if (estimatedTimeMinutes === null) {
-      const timeMatch = /^;\s*estimated printing time \(normal mode\)\s*=\s*(.+)/i.exec(line)
+      const timeMatch = TIME_RE.exec(line)
       if (timeMatch) estimatedTimeMinutes = parsePrusaTime(timeMatch[1])
     }
+    // Prefer the direct grams value if present — it avoids the diameter/density conversion error.
+    if (filamentUsedGrams === null) {
+      const g = extractNumber(line, FILAMENT_G_RE)
+      if (g !== null) filamentUsedGrams = g
+    }
     if (filamentUsedMm === null) {
-      const f = extractNumber(line, /^;\s*filament used \[mm\]\s*=\s*([\d.]+)/)
+      const f = extractNumber(line, FILAMENT_MM_RE)
       if (f !== null) {
         filamentUsedMm = f
-        filamentUsedGrams = gramsFromMm(f, diameter, density)
+        if (filamentUsedGrams === null) {
+          filamentUsedGrams = gramsFromMm(f, diameter, density)
+        }
       }
     }
     if (layerCount === null) {
-      const lc = extractNumber(line, /^;\s*total layers count\s*=\s*(\d+)/)
+      const lc = extractNumber(line, LAYERS_RE)
       if (lc !== null) layerCount = lc
     }
     if (printerIdentifier === null) {
@@ -196,6 +210,22 @@ function extractPrusa(lines: string[], diameter: number, density: number): Parti
       const bt = extractNumber(line, /^M1(?:40|90)\s+S(\d+)/)
       if (bt !== null) bedTemp = bt
     }
+
+    // Early termination once every field is filled — keeps parsing fast on
+    // 50k-line files where the metadata sits in the footer.
+    if (
+      estimatedTimeMinutes !== null &&
+      filamentUsedMm !== null &&
+      filamentUsedGrams !== null &&
+      layerCount !== null &&
+      nozzleTemp !== null &&
+      bedTemp !== null &&
+      printerIdentifier !== null &&
+      filamentType !== null &&
+      filamentBrand !== null
+    ) {
+      break
+    }
   }
 
   return { estimatedTimeMinutes, filamentUsedMm, filamentUsedGrams, layerCount, nozzleTemp, bedTemp, printerIdentifier, filamentType, filamentBrand }
@@ -217,24 +247,44 @@ function extractBambu(lines: string[], diameter: number, density: number): Parti
   let filamentType: string | null = null
   let filamentBrand: string | null = null
 
+  // BambuStudio formats observed across versions:
+  //   `; total estimated time (s) = 5580`     (older numeric seconds)
+  //   `; total estimated time: 1h 33m`        (newer HMS, with colon)
+  //   `; total estimated time = 1h 33m`       (newer HMS, with equals)
+  // Filament:
+  //   `; total filament used [mm] = …`
+  //   `; total filament used [g]  = …`
+  //   `; filament used [mm] = …` (some single-material exports)
+  const TIME_SECONDS_RE = /^;\s*total\s+estimated\s+time\s*\(s\)\s*[=:]\s*([\d.]+)/i
+  const TIME_HMS_RE = /^;\s*total\s+estimated\s+time\s*[=:]\s*(.+)/i
+  const FILAMENT_MM_RE = /^;\s*(?:total\s+)?filament\s+used\s*\[mm\]\s*[=:]\s*([\d.]+)/i
+  const FILAMENT_G_RE = /^;\s*(?:total\s+)?filament\s+used\s*\[g\]\s*[=:]\s*([\d.]+)/i
+
   for (const line of lines) {
     if (estimatedTimeMinutes === null) {
-      // BambuStudio uses seconds: "; total estimated time (s) = 5580"
-      const t = extractNumber(line, /^;\s*total estimated time \(s\)\s*=\s*([\d.]+)/)
+      const t = extractNumber(line, TIME_SECONDS_RE)
       if (t !== null) estimatedTimeMinutes = t / 60
     }
-    if (filamentUsedMm === null) {
-      // Design decision: first occurrence for multi-material (AMS)
-      const f = extractNumber(line, /^;\s*total filament used \[mm\]\s*=\s*([\d.]+)/)
-      if (f !== null) {
-        filamentUsedMm = f
-        filamentUsedGrams = gramsFromMm(f, diameter, density)
+    if (estimatedTimeMinutes === null) {
+      const hmsMatch = TIME_HMS_RE.exec(line)
+      if (hmsMatch) {
+        const parsed = parsePrusaTime(hmsMatch[1])
+        if (parsed !== null) estimatedTimeMinutes = parsed
       }
     }
-    if (filamentUsedGrams === null && filamentUsedMm === null) {
-      // Also accept "[g]" directly if present
-      const g = extractNumber(line, /^;\s*total filament used \[g\]\s*=\s*([\d.]+)/)
+    // Prefer grams directly when available — skips the diameter/density conversion.
+    if (filamentUsedGrams === null) {
+      const g = extractNumber(line, FILAMENT_G_RE)
       if (g !== null) filamentUsedGrams = g
+    }
+    if (filamentUsedMm === null) {
+      const f = extractNumber(line, FILAMENT_MM_RE)
+      if (f !== null) {
+        filamentUsedMm = f
+        if (filamentUsedGrams === null) {
+          filamentUsedGrams = gramsFromMm(f, diameter, density)
+        }
+      }
     }
     if (printerIdentifier === null) {
       const pi = extractString(line, /^;\s*machine_name\s*=\s*(.+)/)
@@ -255,6 +305,18 @@ function extractBambu(lines: string[], diameter: number, density: number): Parti
     if (bedTemp === null) {
       const bt = extractNumber(line, /^M1(?:40|90)\s+S(\d+)/)
       if (bt !== null) bedTemp = bt
+    }
+
+    if (
+      estimatedTimeMinutes !== null &&
+      filamentUsedGrams !== null &&
+      nozzleTemp !== null &&
+      bedTemp !== null &&
+      printerIdentifier !== null &&
+      filamentType !== null &&
+      filamentBrand !== null
+    ) {
+      break
     }
   }
 
@@ -332,11 +394,18 @@ const DEFAULT_DIAMETER = 1.75 // mm
 export function parseGcode(content: string, defaults?: ParserDefaults): GcodeData | null {
   if (!content || content.trim().length === 0) return null
 
-  // Only inspect the first 200 lines for performance
-  const lines = content.split(/\r?\n/).slice(0, 200)
+  // Slicer detection only needs the first ~200 lines: the `generated by …`
+  // comment is always near the top of every supported slicer.
+  const allLines = content.split(/\r?\n/)
+  const headLines = allLines.length > 200 ? allLines.slice(0, 200) : allLines
 
-  const detected = detectSlicer(lines)
+  const detected = detectSlicer(headLines)
   if (!detected) return null
+
+  // For metadata extraction we walk ALL lines (header for Cura/S3D, footer
+  // for PrusaSlicer/Orca/Bambu). Each extractor short-circuits once every
+  // critical field is filled, so a 50k-line file still parses in milliseconds.
+  const lines = allLines
 
   const density = defaults?.density ?? DEFAULT_DENSITY
   const diameter = defaults?.diameter ?? DEFAULT_DIAMETER
