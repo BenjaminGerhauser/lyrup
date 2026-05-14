@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { useActionState, useState, type ReactNode } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -12,53 +12,74 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Trash2Icon } from 'lucide-react'
-import { deletePrinter, type PrinterActionResult } from '@/app/actions/printers'
 
-// ---------------------------------------------------------------------------
-// DeletePrinterDialog
-// ---------------------------------------------------------------------------
+export type DeleteActionResult =
+  | { success: true }
+  | { success: false; error: string }
 
-interface DeletePrinterDialogProps {
-  printerId: string
-  printerName: string
+interface DeleteConfirmDialogProps {
+  id: string
+  displayName: string
+  entityLabel: string
+  action: (formData: FormData) => Promise<DeleteActionResult>
+  triggerRender?: ReactNode
+  triggerChildren?: ReactNode
 }
 
-const initialState: PrinterActionResult | null = null
+const initialState: DeleteActionResult | null = null
 
-export function DeletePrinterDialog({ printerId, printerName }: DeletePrinterDialogProps) {
+export function DeleteConfirmDialog({
+  id,
+  displayName,
+  entityLabel,
+  action,
+  triggerRender,
+  triggerChildren,
+}: DeleteConfirmDialogProps) {
   const [open, setOpen] = useState(false)
   const [state, dispatch, isPending] = useActionState(
-    async (_prev: PrinterActionResult | null, formData: FormData) => {
-      const result = await deletePrinter(formData)
+    async (_prev: DeleteActionResult | null, formData: FormData) => {
+      const result = await action(formData)
       if (result.success) {
         setOpen(false)
       }
       return result
     },
-    initialState
+    initialState,
   )
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="destructive" size="sm" aria-label={`Eliminar ${printerName}`} />
+          triggerRender ?? (
+            <Button
+              variant="destructive"
+              size="sm"
+              aria-label={`Eliminar ${displayName}`}
+            />
+          )
         }
       >
-        <Trash2Icon />
-        <span className="sr-only">Eliminar</span>
+        {triggerChildren ?? (
+          <>
+            <Trash2Icon />
+            <span className="sr-only">Eliminar</span>
+          </>
+        )}
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Eliminar impresora</DialogTitle>
+          <DialogTitle>Eliminar {entityLabel}</DialogTitle>
           <DialogDescription>
-            ¿Estás seguro que querés eliminar <strong>{printerName}</strong>? Esta acción no se puede deshacer.
+            ¿Estás seguro que querés eliminar <strong>{displayName}</strong>?
+            Esta acción no se puede deshacer.
           </DialogDescription>
         </DialogHeader>
 
         <form action={dispatch}>
-          <input type="hidden" name="id" value={printerId} />
+          <input type="hidden" name="id" value={id} />
 
           {state && !state.success && (
             <div
@@ -79,11 +100,7 @@ export function DeletePrinterDialog({ printerId, printerName }: DeletePrinterDia
             >
               Cancelar
             </Button>
-            <Button
-              type="submit"
-              variant="destructive"
-              disabled={isPending}
-            >
+            <Button type="submit" variant="destructive" disabled={isPending}>
               {isPending ? 'Eliminando…' : 'Eliminar'}
             </Button>
           </DialogFooter>

@@ -10,7 +10,8 @@ import {
 import type { Material, RefFilamentCatalog } from '@/types/domain'
 import { formatArs } from '@/lib/format'
 import { EditMaterialDialog } from './edit-material-dialog'
-import { DeleteMaterialDialog } from './delete-material-dialog'
+import { DeleteConfirmDialog } from '@/components/shared/delete-confirm-dialog'
+import { deleteMaterial } from '@/app/actions/materials'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -104,7 +105,12 @@ function MaterialCard({ material }: { material: MaterialWithRef }) {
 
       <CardFooter className="gap-2">
         <EditMaterialDialog material={material} />
-        <DeleteMaterialDialog materialId={material.id} materialName={displayName} />
+        <DeleteConfirmDialog
+          id={material.id}
+          displayName={displayName}
+          entityLabel="material"
+          action={deleteMaterial}
+        />
       </CardFooter>
     </Card>
   )

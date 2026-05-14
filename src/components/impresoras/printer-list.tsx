@@ -9,7 +9,8 @@ import {
 } from '@/components/ui/card'
 import type { Printer, RefPrinterModel } from '@/types/domain'
 import { EditPrinterDialog } from './edit-printer-dialog'
-import { DeletePrinterDialog } from './delete-printer-dialog'
+import { DeleteConfirmDialog } from '@/components/shared/delete-confirm-dialog'
+import { deletePrinter } from '@/app/actions/printers'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -90,7 +91,12 @@ function PrinterCard({ printer }: { printer: PrinterWithRef }) {
 
       <CardFooter className="gap-2">
         <EditPrinterDialog printer={printer} />
-        <DeletePrinterDialog printerId={printer.id} printerName={displayName} />
+        <DeleteConfirmDialog
+          id={printer.id}
+          displayName={displayName}
+          entityLabel="impresora"
+          action={deletePrinter}
+        />
       </CardFooter>
     </Card>
   )
