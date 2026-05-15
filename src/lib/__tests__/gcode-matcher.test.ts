@@ -79,6 +79,7 @@ function makeUserPrinter(overrides: Partial<Printer> = {}): Printer {
     life_hours_estimate: 2000,
     nozzle_diameter: 0.4,
     accumulated_hours: 0,
+    purchase_date: null,
     ...overrides,
   }
 }

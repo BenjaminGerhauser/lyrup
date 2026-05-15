@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState, type ReactNode } from 'react'
+import { useActionState, useState, type ReactElement, type ReactNode } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ interface DeleteConfirmDialogProps {
   displayName: string
   entityLabel: string
   action: (formData: FormData) => Promise<DeleteActionResult>
-  triggerRender?: ReactNode
+  triggerRender?: ReactElement
   triggerChildren?: ReactNode
 }
 

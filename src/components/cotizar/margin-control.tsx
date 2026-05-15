@@ -73,7 +73,7 @@ export function MarginControl({ value, onChange }: MarginControlProps) {
               min={MULT_MIN}
               max={MULT_MAX}
               step={MULT_STEP}
-              onValueChange={(v: number | number[]) => {
+              onValueChange={(v: number | readonly number[]) => {
                 const next = Array.isArray(v) ? v[0] : v
                 if (typeof next === 'number' && Number.isFinite(next)) {
                   onChange(multiplierToPercent(next))

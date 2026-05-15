@@ -352,7 +352,7 @@ export async function getQuote(id: string): Promise<QuoteWithItems | null> {
 
   return {
     ...(quote as Quote),
-    items: (items ?? []) as QuoteItem[],
+    items: (items ?? []) as unknown as QuoteItem[],
     client,
   }
 }

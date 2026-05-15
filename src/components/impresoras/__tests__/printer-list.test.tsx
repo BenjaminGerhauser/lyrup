@@ -106,6 +106,7 @@ function makePrinter(overrides: Partial<PrinterWithRef> = {}): PrinterWithRef {
     life_hours_estimate: 5000,
     nozzle_diameter: 0.4,
     accumulated_hours: 0,
+    purchase_date: null,
     ref_printer_model: REF_MODEL,
     ...overrides,
   }

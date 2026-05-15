@@ -122,6 +122,7 @@ const userPrinterMK4: Printer = {
   life_hours_estimate: 3000,
   nozzle_diameter: 0.4,
   accumulated_hours: 200,
+  purchase_date: null,
 }
 
 /** User-owned Ender 3 V3 printer */
@@ -138,6 +139,7 @@ const userPrinterEnder3: Printer = {
   life_hours_estimate: 2000,
   nozzle_diameter: 0.4,
   accumulated_hours: 0,
+  purchase_date: null,
 }
 
 /** User-owned Prusament PLA material */
