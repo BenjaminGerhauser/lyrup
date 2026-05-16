@@ -22,6 +22,7 @@ import {
 import { PlusIcon } from 'lucide-react'
 import { addPrinter, type PrinterActionResult } from '@/app/actions/printers'
 import type { RefPrinterModel } from '@/types/domain'
+import { trackPrinterAdded } from '@/lib/analytics/umami'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -46,6 +47,7 @@ export function AddPrinterDialog({ refPrinterModels }: AddPrinterDialogProps) {
     async (_prev: PrinterActionResult | null, formData: FormData) => {
       const result = await addPrinter(formData)
       if (result.success) {
+        trackPrinterAdded()
         handleClose()
       }
       return result

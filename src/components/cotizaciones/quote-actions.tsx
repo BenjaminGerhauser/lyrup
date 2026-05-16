@@ -21,6 +21,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { buildWhatsAppUrl, buildQuoteWhatsAppMessage } from '@/lib/format'
 import type { QuoteDocumentUser } from '@/lib/pdf/document'
 import type { QuoteWithItems, Client } from '@/types/domain'
+import { trackWhatsappClicked } from '@/lib/analytics/umami'
 
 // ---------------------------------------------------------------------------
 // Lazy-load the PDF button — SSR disabled so react-pdf never runs on the server.
@@ -78,6 +79,8 @@ export function QuoteActions({ quote, user, client }: QuoteActionsProps) {
         : 'Compartir por WhatsApp'
 
   const handleWhatsApp = () => {
+    // Fire before opening the URL — fires regardless of has_phone value.
+    trackWhatsappClicked({ has_phone: whatsAppUrl !== null })
     if (!whatsAppUrl) return
     window.open(whatsAppUrl, '_blank', 'noopener,noreferrer')
   }

@@ -11,6 +11,7 @@ import { ClientPicker } from './client-picker'
 import { QuoteSummary } from './quote-summary'
 import { createQuote } from '@/app/actions/quotes'
 import { formatArs } from '@/lib/format'
+import { trackQuoteSaved } from '@/lib/analytics/umami'
 import type {
   Client,
   Material,
@@ -240,6 +241,7 @@ export function CotizarWizard({
         setSubmitError(result.error)
         return
       }
+      trackQuoteSaved({ item_count: items.length })
       router.push(`/cotizaciones/${result.quote.id}`)
     })
   }

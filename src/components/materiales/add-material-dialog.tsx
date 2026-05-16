@@ -23,6 +23,7 @@ import { addMaterial, type MaterialActionResult } from '@/app/actions/materials'
 import type { RefFilamentCatalog } from '@/types/domain'
 import { formatArs } from '@/lib/format'
 import { ColorPicker } from './color-picker'
+import { trackMaterialAdded } from '@/lib/analytics/umami'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -85,6 +86,7 @@ export function AddMaterialDialog({ refFilamentCatalog }: AddMaterialDialogProps
       }
       const result = await addMaterial(formData)
       if (result.success) {
+        trackMaterialAdded()
         handleClose()
       }
       return result

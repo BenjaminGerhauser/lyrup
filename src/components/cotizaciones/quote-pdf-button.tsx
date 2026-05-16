@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button'
 import { generateQuotePdf } from '@/lib/pdf'
 import type { QuoteDocumentUser } from '@/lib/pdf/document'
 import type { QuoteWithItems, Client } from '@/types/domain'
+import { trackPdfGenerated, trackPdfError } from '@/lib/analytics/umami'
 
 // ---------------------------------------------------------------------------
 // Props
@@ -59,9 +60,11 @@ export function QuotePdfButton({ quote, user, client }: QuotePdfButtonProps) {
 
       // Revoke the object URL after a short delay to allow the download to start
       setTimeout(() => URL.revokeObjectURL(url), 1000)
+      trackPdfGenerated({ item_count: quote.items.length })
     } catch (err) {
       console.error('[QuotePdfButton] PDF generation failed:', err)
       setError('No pudimos generar el PDF. Intentá de nuevo.')
+      trackPdfError()
     } finally {
       setIsGenerating(false)
     }

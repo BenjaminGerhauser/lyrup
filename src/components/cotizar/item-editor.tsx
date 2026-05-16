@@ -17,6 +17,7 @@ import { parseGcode } from '@/lib/gcode-parser'
 import { matchGcodeToUserEquipment } from '@/lib/gcode-matcher'
 import { calculateCosts } from '@/lib/cost-calculator'
 import { formatArs } from '@/lib/format'
+import { trackGcodeParsed } from '@/lib/analytics/umami'
 import type {
   Material,
   Printer,
@@ -147,6 +148,12 @@ export function ItemEditor({
         refPrinters,
         refFilaments,
       )
+
+      // Fire analytics immediately after parse+match, regardless of outcome.
+      trackGcodeParsed({
+        printer_matched: match.suggestedPrinterId !== null,
+        material_matched: match.suggestedMaterialId !== null,
+      })
 
       const missing: string[] = []
       if (parsed.filamentUsedGrams == null) missing.push('filamento')
