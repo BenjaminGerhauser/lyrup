@@ -19,6 +19,7 @@ import { generateQuotePdf } from '@/lib/pdf'
 import type { QuoteDocumentUser } from '@/lib/pdf/document'
 import type { QuoteWithItems, Client } from '@/types/domain'
 import { trackPdfGenerated, trackPdfError } from '@/lib/analytics/umami'
+import * as Sentry from '@sentry/nextjs'
 
 // ---------------------------------------------------------------------------
 // Props
@@ -63,6 +64,7 @@ export function QuotePdfButton({ quote, user, client }: QuotePdfButtonProps) {
       trackPdfGenerated({ item_count: quote.items.length })
     } catch (err) {
       console.error('[QuotePdfButton] PDF generation failed:', err)
+      Sentry.captureException(err, { tags: { feature: 'pdf-export' } })
       setError('No pudimos generar el PDF. Intentá de nuevo.')
       trackPdfError()
     } finally {

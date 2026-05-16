@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 import type { Database } from './types'
+import * as Sentry from '@sentry/nextjs'
 
 export interface UpdateSessionResult {
   response: NextResponse
@@ -50,6 +51,9 @@ export async function updateSession(request: NextRequest): Promise<UpdateSession
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
+  // Attach user id to all Sentry events for this request (id only — no PII).
+  Sentry.setUser(user ? { id: user.id } : null)
 
   return { response, supabase, user }
 }
