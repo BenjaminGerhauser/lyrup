@@ -1,5 +1,8 @@
 /**
- * ARS currency formatter — Sprint 1, Phase 2.
+ * ARS currency formatter — Sprint 3 refactor.
+ * Canonical export: formatARS (uppercase). The old formatArs alias is kept in
+ * index.ts for back-compatibility with all existing call sites.
+ *
  * Uses Intl.NumberFormat — safe for server-side RSC use (Node 18+ ICU).
  */
 
@@ -13,12 +16,13 @@ const arsFormatter = new Intl.NumberFormat('es-AR', {
  * Format a number as Argentine Peso with thousands dots and no decimals.
  *
  * Examples:
- *   formatArs(1234)      → "$1.234"
- *   formatArs(0)         → "$0"
- *   formatArs(1500000)   → "$1.500.000"
- *   formatArs(1234.7)    → "$1.235"   (rounds up)
+ *   formatARS(1234)      → "$1.234"
+ *   formatARS(0)         → "$0"
+ *   formatARS(1500000)   → "$1.500.000"
+ *   formatARS(1234.7)    → "$1.235"   (rounds up)
+ *   formatARS(-500)      → "-$500"
  */
-export function formatArs(value: number): string {
+export function formatARS(value: number): string {
   return arsFormatter.format(value)
 }
 
