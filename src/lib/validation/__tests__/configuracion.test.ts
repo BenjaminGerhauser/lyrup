@@ -12,6 +12,10 @@ const VALID_DATA: ConfigData = {
   default_labor_factor: 0.20,
   province: 'Córdoba',
   electricity_rate_kwh: 88.4,
+  // Sprint 3 — PDF config (all optional, null = not submitted)
+  quote_validity_days: 30,
+  quote_footer_note: null,
+  pdf_show_breakdown: true,
 }
 
 describe('validateConfig', () => {
@@ -105,5 +109,39 @@ describe('validateConfig', () => {
   // phone / whatsapp — optional
   it('null phone and business_phone → valid', () => {
     expect(validateConfig({ ...VALID_DATA, phone: null, business_phone: null })).toEqual({ valid: true })
+  })
+
+  // Sprint 3 — quote_validity_days
+  it('quote_validity_days = null → valid (optional field)', () => {
+    expect(validateConfig({ ...VALID_DATA, quote_validity_days: null })).toEqual({ valid: true })
+  })
+
+  it('quote_validity_days = 1 → valid (lower bound)', () => {
+    expect(validateConfig({ ...VALID_DATA, quote_validity_days: 1 })).toEqual({ valid: true })
+  })
+
+  it('quote_validity_days = 365 → valid (upper bound)', () => {
+    expect(validateConfig({ ...VALID_DATA, quote_validity_days: 365 })).toEqual({ valid: true })
+  })
+
+  it('quote_validity_days = 0 → error (below lower bound)', () => {
+    const result = validateConfig({ ...VALID_DATA, quote_validity_days: 0 })
+    expect(result).toHaveProperty('error')
+    expect((result as { error: string }).error).toContain('validez del presupuesto')
+  })
+
+  it('quote_validity_days = 366 → error (above upper bound)', () => {
+    const result = validateConfig({ ...VALID_DATA, quote_validity_days: 366 })
+    expect(result).toHaveProperty('error')
+    expect((result as { error: string }).error).toContain('validez del presupuesto')
+  })
+
+  it('quote_validity_days as string "30" → valid', () => {
+    expect(validateConfig({ ...VALID_DATA, quote_validity_days: '30' })).toEqual({ valid: true })
+  })
+
+  it('quote_validity_days as string "0" → error', () => {
+    const result = validateConfig({ ...VALID_DATA, quote_validity_days: '0' })
+    expect(result).toHaveProperty('error')
   })
 })

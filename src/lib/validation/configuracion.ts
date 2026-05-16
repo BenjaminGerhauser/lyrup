@@ -15,6 +15,10 @@ export interface ConfigData {
   default_labor_factor: string | number | null
   province: string | null
   electricity_rate_kwh: string | number | null
+  // Sprint 3 — PDF config (all optional; null = not submitted = keep existing DB value)
+  quote_validity_days: string | number | null
+  quote_footer_note: string | null
+  pdf_show_breakdown: string | boolean | null
 }
 
 export type ValidationResult = { valid: true } | { error: string }
@@ -84,6 +88,18 @@ export function validateConfig(data: ConfigData): ValidationResult {
 
     if (isNaN(rate as number) || (rate as number) <= 0) {
       return { error: 'La tarifa eléctrica debe ser mayor a cero' }
+    }
+  }
+
+  // quote_validity_days — optional; if provided must be integer in [1, 365]
+  if (data.quote_validity_days !== null && data.quote_validity_days !== undefined && data.quote_validity_days !== '') {
+    const days =
+      typeof data.quote_validity_days === 'string'
+        ? parseInt(data.quote_validity_days, 10)
+        : Math.trunc(data.quote_validity_days as number)
+
+    if (isNaN(days) || days < 1 || days > 365) {
+      return { error: 'La validez del presupuesto debe ser un número entre 1 y 365 días' }
     }
   }
 

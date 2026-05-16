@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { updateConfig, type ConfigActionResult } from '@/app/actions/configuracion'
 import type { RefElectricityRate } from '@/types/domain'
+import { QuoteConfigFields, type QuoteConfigFieldValues } from './quote-config-fields'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -29,6 +30,10 @@ export interface ConfigFormValues {
   default_labor_factor: number
   province: string
   electricity_rate_kwh: number
+  // Sprint 3 — PDF config
+  quote_validity_days: number
+  quote_footer_note: string
+  pdf_show_breakdown: boolean
 }
 
 interface ConfiguracionFormProps {
@@ -46,6 +51,10 @@ const defaultValues: ConfigFormValues = {
   default_labor_factor: 0.20,
   province: '',
   electricity_rate_kwh: 0,
+  // Sprint 3 — PDF config defaults
+  quote_validity_days: 30,
+  quote_footer_note: '',
+  pdf_show_breakdown: true,
 }
 
 const initialActionState: ConfigActionResult | null = null
@@ -71,6 +80,12 @@ export function ConfiguracionForm({ initialValues, electricityRates }: Configura
     values.electricity_rate_kwh ? String(values.electricity_rate_kwh) : ''
   )
   const [provinceChanged, setProvinceChanged] = useState(false)
+  // Sprint 3 — PDF config state
+  const [quoteConfigValues, setQuoteConfigValues] = useState<QuoteConfigFieldValues>({
+    quote_validity_days: String(values.quote_validity_days),
+    quote_footer_note: values.quote_footer_note,
+    pdf_show_breakdown: values.pdf_show_breakdown,
+  })
 
   // Sync local state with `values` when initialValues changes after revalidatePath.
   // Safe because in single-tab usage, post-save values match what the user just typed.
@@ -84,6 +99,11 @@ export function ConfiguracionForm({ initialValues, electricityRates }: Configura
     setDefaultLaborFactor(String(values.default_labor_factor))
     setSelectedProvince(values.province)
     setElectricityRate(values.electricity_rate_kwh ? String(values.electricity_rate_kwh) : '')
+    setQuoteConfigValues({
+      quote_validity_days: String(values.quote_validity_days),
+      quote_footer_note: values.quote_footer_note,
+      pdf_show_breakdown: values.pdf_show_breakdown,
+    })
   }, [
     values.business_name,
     values.phone,
@@ -94,6 +114,9 @@ export function ConfiguracionForm({ initialValues, electricityRates }: Configura
     values.default_labor_factor,
     values.province,
     values.electricity_rate_kwh,
+    values.quote_validity_days,
+    values.quote_footer_note,
+    values.pdf_show_breakdown,
   ])
 
   // useActionState for form submission
@@ -102,6 +125,14 @@ export function ConfiguracionForm({ initialValues, electricityRates }: Configura
       // Inject controlled values that aren't native form fields
       formData.set('province', selectedProvince)
       formData.set('electricity_rate_kwh', electricityRate)
+      // Inject PDF config values (checkbox needs explicit false handling)
+      formData.set('quote_validity_days', quoteConfigValues.quote_validity_days)
+      formData.set('quote_footer_note', quoteConfigValues.quote_footer_note)
+      if (quoteConfigValues.pdf_show_breakdown) {
+        formData.set('pdf_show_breakdown', 'on')
+      } else {
+        formData.delete('pdf_show_breakdown')
+      }
       const result = await updateConfig(formData)
       if (result.success) {
         setProvinceChanged(false)
@@ -368,6 +399,16 @@ export function ConfiguracionForm({ initialValues, electricityRates }: Configura
           )}
         </div>
       </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* QUOTE PDF CONFIG                                                      */}
+      {/* ------------------------------------------------------------------ */}
+      <QuoteConfigFields
+        values={quoteConfigValues}
+        onValuesChange={(next) =>
+          setQuoteConfigValues((prev) => ({ ...prev, ...next }))
+        }
+      />
 
       {/* ------------------------------------------------------------------ */}
       {/* ERROR / SUCCESS                                                       */}

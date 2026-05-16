@@ -52,6 +52,10 @@ export default async function ConfiguracionPage() {
                 default_labor_factor: user.default_labor_factor ?? 0.20,
                 province: user.province ?? '',
                 electricity_rate_kwh: user.electricity_rate_kwh ?? 0,
+                // Sprint 3 — PDF config fields
+                quote_validity_days: user.quote_validity_days ?? 30,
+                quote_footer_note: user.quote_footer_note ?? '',
+                pdf_show_breakdown: user.pdf_show_breakdown ?? true,
               }
             : undefined
         }

@@ -44,6 +44,12 @@ export async function updateConfig(formData: FormData): Promise<ConfigActionResu
     const defaultLaborFactor = formData.get('default_labor_factor')?.toString() || null
     const province = formData.get('province')?.toString() || null
     const electricityRateKwh = formData.get('electricity_rate_kwh')?.toString() || null
+    // Sprint 3 — PDF config fields
+    const quoteValidityDays = formData.get('quote_validity_days')?.toString() || null
+    const quoteFooterNote = formData.get('quote_footer_note')?.toString() || null
+    // Checkbox: present in FormData → true; absent → false (unchecked = not submitted)
+    const pdfShowBreakdownRaw = formData.get('pdf_show_breakdown')?.toString() || null
+    const pdfShowBreakdown: string | null = pdfShowBreakdownRaw !== null ? pdfShowBreakdownRaw : null
 
     // Validate
     const validation = validateConfig({
@@ -56,6 +62,9 @@ export async function updateConfig(formData: FormData): Promise<ConfigActionResu
       default_labor_factor: defaultLaborFactor,
       province,
       electricity_rate_kwh: electricityRateKwh,
+      quote_validity_days: quoteValidityDays,
+      quote_footer_note: quoteFooterNote,
+      pdf_show_breakdown: pdfShowBreakdown,
     })
 
     if ('error' in validation) {
@@ -76,6 +85,13 @@ export async function updateConfig(formData: FormData): Promise<ConfigActionResu
     if (defaultLaborFactor !== null) updateData.default_labor_factor = parseFloat(defaultLaborFactor)
     if (province !== null) updateData.province = province
     if (electricityRateKwh !== null) updateData.electricity_rate_kwh = parseFloat(electricityRateKwh)
+    // Sprint 3 — PDF config fields
+    if (quoteValidityDays !== null) updateData.quote_validity_days = parseInt(quoteValidityDays, 10)
+    // quote_footer_note: always write (null clears it, empty string clears it)
+    updateData.quote_footer_note = quoteFooterNote || null
+    // pdf_show_breakdown: checkbox — 'on' / 'true' = true; any other value or absent = false
+    updateData.pdf_show_breakdown =
+      pdfShowBreakdown === 'on' || pdfShowBreakdown === 'true'
 
     const { error } = await supabase
       .from('users')

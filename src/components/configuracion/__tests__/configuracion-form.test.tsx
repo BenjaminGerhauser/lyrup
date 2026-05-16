@@ -110,6 +110,10 @@ const INITIAL_VALUES = {
   default_labor_factor: 0.20,
   province: 'Córdoba',
   electricity_rate_kwh: 88.4,
+  // Sprint 3 — PDF config
+  quote_validity_days: 30,
+  quote_footer_note: '',
+  pdf_show_breakdown: true,
 }
 
 // ---------------------------------------------------------------------------

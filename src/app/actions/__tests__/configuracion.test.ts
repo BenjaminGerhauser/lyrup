@@ -61,6 +61,10 @@ const VALID_CONFIG = {
   default_labor_factor: '0.20',
   province: 'Córdoba',
   electricity_rate_kwh: '88.4',
+  // Sprint 3 — PDF config
+  quote_validity_days: '30',
+  quote_footer_note: '',
+  pdf_show_breakdown: 'on',
 }
 
 // ---------------------------------------------------------------------------
@@ -170,5 +174,31 @@ describe('updateConfig server action', () => {
 
     expect(result).toHaveProperty('success', false)
     expect((result as { error: string }).error).toContain('margen')
+  })
+
+  // Sprint 3 — quote_validity_days validation
+  it('quote_validity_days = 0 → { success: false, error: "..." } — DB not called', async () => {
+    setupAuthenticatedUser()
+
+    const result = await updateConfig(makeFormData({
+      ...VALID_CONFIG,
+      quote_validity_days: '0',
+    }))
+
+    expect(result).toHaveProperty('success', false)
+    expect((result as { error: string }).error).toContain('validez del presupuesto')
+    expect(mockFrom).not.toHaveBeenCalled()
+  })
+
+  it('quote_validity_days = 366 → { success: false, error: "..." }', async () => {
+    setupAuthenticatedUser()
+
+    const result = await updateConfig(makeFormData({
+      ...VALID_CONFIG,
+      quote_validity_days: '366',
+    }))
+
+    expect(result).toHaveProperty('success', false)
+    expect((result as { error: string }).error).toContain('validez del presupuesto')
   })
 })
