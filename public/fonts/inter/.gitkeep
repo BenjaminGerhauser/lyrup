@@ -1,0 +1,5 @@
+# Inter TTF fonts — required by @react-pdf/renderer
+# Place Inter-Regular.ttf and Inter-Bold.ttf in this directory.
+# Download from: https://rsms.me/inter/ (Inter v4, TTF format)
+# These files are NOT committed to git (add to .gitignore if desired).
+# They must be present on the server / in the build output.
