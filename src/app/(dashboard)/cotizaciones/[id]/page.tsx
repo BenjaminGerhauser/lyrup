@@ -1,15 +1,17 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeftIcon, FileTextIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/cotizaciones/status-badge'
 import { StatusToggle } from '@/components/cotizaciones/status-toggle'
 import { EditQuoteDialog } from '@/components/cotizaciones/edit-quote-dialog'
 import { DeleteQuoteDialog } from '@/components/cotizaciones/delete-quote-dialog'
+import { QuoteActions } from '@/components/cotizaciones/quote-actions'
 import { getQuote } from '@/app/actions/quotes'
 import { listClients } from '@/app/actions/clients'
+import { createSupabaseServerClient } from '@/lib/supabase/server-cookies'
 import { formatArs } from '@/lib/format'
+import type { QuoteDocumentUser } from '@/lib/pdf/document'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -25,10 +27,31 @@ const dateFormatter = new Intl.DateTimeFormat('es-AR', {
 
 export default async function CotizacionDetallePage({ params }: PageProps) {
   const { id } = await params
-  const quote = await getQuote(id)
+
+  // Parallel fetches: quote+items+client AND user PDF config row
+  const supabase = await createSupabaseServerClient()
+  const { data: { user: authUser } } = await supabase.auth.getUser()
+
+  const [quote, clients] = await Promise.all([
+    getQuote(id),
+    listClients(),
+  ])
   if (!quote) notFound()
 
-  const clients = await listClients()
+  // Fetch user PDF config fields (needed by QuoteActions → PDF + WhatsApp)
+  let userPdfData: QuoteDocumentUser | null = null
+  if (authUser) {
+    const { data: userRow } = await supabase
+      .from('users')
+      .select(
+        'business_name, phone, business_phone, plan, quote_validity_days, quote_footer_note, pdf_show_breakdown'
+      )
+      .eq('id', authUser.id)
+      .single()
+    if (userRow) {
+      userPdfData = userRow as QuoteDocumentUser
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -167,19 +190,9 @@ export default async function CotizacionDetallePage({ params }: PageProps) {
         )}
       </Card>
 
-      <Card>
-        <CardContent className="flex items-center justify-between gap-3 py-4">
-          <div>
-            <p className="font-medium">Descargar PDF</p>
-            <p className="text-xs text-muted-foreground">
-              Próximamente en Sprint 3 — vamos a enviarlo automático por WhatsApp.
-            </p>
-          </div>
-          <Button type="button" variant="outline" disabled>
-            Próximamente
-          </Button>
-        </CardContent>
-      </Card>
+      {userPdfData && (
+        <QuoteActions quote={quote} user={userPdfData} client={quote.client} />
+      )}
     </div>
   )
 }
