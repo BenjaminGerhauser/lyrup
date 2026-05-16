@@ -2,8 +2,10 @@
 
 import { useState, useTransition } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import type { OnboardingDraft } from '@/types/domain'
 import { completeOnboarding } from '@/app/actions/onboarding'
+import { trackOnboardingComplete } from '@/lib/analytics/umami'
 import Step1Business from '@/components/onboarding/step-1-business'
 import Step2Printer from '@/components/onboarding/step-2-printer'
 import Step3Material from '@/components/onboarding/step-3-material'
@@ -47,11 +49,20 @@ export default function OnboardingPage() {
     setSubmitError(undefined)
 
     startTransition(async () => {
-      const result = await completeOnboarding(final)
-      // If redirect() was called, this branch is unreachable.
-      // Only reached when the action returns { error }.
-      if (result && 'error' in result) {
-        setSubmitError(result.error)
+      try {
+        const result = await completeOnboarding(final)
+        // Only reached when the action returns { error } (redirect was NOT called).
+        if (result && 'error' in result) {
+          setSubmitError(result.error)
+        }
+      } catch (err) {
+        // redirect() inside completeOnboarding throws NEXT_REDIRECT on success.
+        // Fire the analytics event here, client-side, BEFORE re-throwing so
+        // Next.js can complete the navigation.
+        if (isRedirectError(err)) {
+          trackOnboardingComplete()
+        }
+        throw err
       }
     })
   }

@@ -4,6 +4,7 @@ import { useActionState } from 'react'
 import Link from 'next/link'
 import { signUp } from '@/app/actions/auth'
 import type { AuthResult } from '@/app/actions/auth'
+import { trackSignupComplete } from '@/lib/analytics/umami'
 
 // ---------------------------------------------------------------------------
 // Initial state
@@ -17,7 +18,13 @@ const initialState: AuthResult | null = null
 
 export default function RegisterPage() {
   const [state, dispatch, isPending] = useActionState<AuthResult | null, FormData>(
-    async (_prev: AuthResult | null, formData: FormData) => signUp(formData),
+    async (_prev: AuthResult | null, formData: FormData) => {
+      const result = await signUp(formData)
+      if (result && 'success' in result) {
+        trackSignupComplete()
+      }
+      return result
+    },
     initialState
   )
 
