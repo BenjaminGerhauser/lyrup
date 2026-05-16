@@ -12,6 +12,7 @@ export function PricingTracker() {
       ([entry]) => {
         if (entry.isIntersecting && !tracked.current) {
           tracked.current = true
+          // grandfathered: pre-wrapper inline umami call
           window.umami?.track('pricing_view')
           observer.disconnect()
         }

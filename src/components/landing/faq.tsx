@@ -31,6 +31,7 @@ export function Faq() {
               className="border-0"
               onOpenChange={(open: boolean) => {
                 if (open && typeof window !== 'undefined') {
+                  // grandfathered: pre-wrapper inline umami call
                   window.umami?.track('faq_click', { question: item.question })
                 }
               }}

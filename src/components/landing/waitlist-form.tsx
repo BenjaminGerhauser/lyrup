@@ -37,6 +37,7 @@ export function WaitlistForm({ utmSource, section }: WaitlistFormProps) {
         if (entries[0]?.isIntersecting) {
           if (!sessionStorage.getItem(sessionKey)) {
             sessionStorage.setItem(sessionKey, '1')
+            // grandfathered: pre-wrapper inline umami call
             window.umami?.track('waitlist_form_view', { section: section ?? 'landing' })
           }
           observer.disconnect()
@@ -67,6 +68,7 @@ export function WaitlistForm({ utmSource, section }: WaitlistFormProps) {
 
     if ('success' in result) {
       if (typeof window !== 'undefined') {
+        // grandfathered: pre-wrapper inline umami call
         window.umami?.track('waitlist_submit', { source: utmSource ?? 'landing' })
       }
       return { status: 'success' }
