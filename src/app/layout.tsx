@@ -22,6 +22,13 @@ export const metadata: Metadata = {
   title: "Lyrup - Calcula cuanto cobrar tus impresiones 3D",
   description:
     "Subi tu G-code y en segundos tenes el costo real: filamento, electricidad, depreciacion y mano de obra. Presupuesto profesional en PDF listo para enviar por WhatsApp.",
+  manifest: "/manifest.json",
+  themeColor: "#06B6D4",
+  appleWebApp: {
+    capable: true,
+    title: "Lyrup",
+    statusBarStyle: "black-translucent",
+  },
   openGraph: {
     title: "Lyrup - Calcula cuanto cobrar tus impresiones 3D",
     description:
