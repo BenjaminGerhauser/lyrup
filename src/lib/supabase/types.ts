@@ -23,6 +23,10 @@ export interface Database {
           logo_url: string | null
           plan: string
           business_phone: string | null
+          // Sprint 3 additions — PDF config
+          quote_validity_days: number
+          quote_footer_note: string | null
+          pdf_show_breakdown: boolean
         }
         Insert: {
           id: string
@@ -41,6 +45,10 @@ export interface Database {
           logo_url?: string | null
           plan?: string
           business_phone?: string | null
+          // Sprint 3 additions — PDF config
+          quote_validity_days?: number
+          quote_footer_note?: string | null
+          pdf_show_breakdown?: boolean
         }
         Update: {
           id?: string
@@ -58,6 +66,10 @@ export interface Database {
           logo_url?: string | null
           plan?: string
           business_phone?: string | null
+          // Sprint 3 additions — PDF config
+          quote_validity_days?: number
+          quote_footer_note?: string | null
+          pdf_show_breakdown?: boolean
         }
         Relationships: []
       }

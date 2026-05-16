@@ -22,6 +22,10 @@ export interface User {
   logo_url: string | null
   plan: 'free' | 'pro' | 'farm'
   business_phone: string | null
+  // Sprint 3 additions — PDF config
+  quote_validity_days: number          // NOT NULL DEFAULT 30; validated 1–365
+  quote_footer_note: string | null
+  pdf_show_breakdown: boolean          // NOT NULL DEFAULT true
 }
 
 export interface Printer {
