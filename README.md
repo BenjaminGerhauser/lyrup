@@ -1,48 +1,53 @@
 # Lyrup
 
-Cotizador inteligente para emprendedores de impresion 3D.
+Cotizador inteligente para emprendedores de impresión 3D — subís el G-code de una pieza y obtenés el costo real de material y tiempo de impresión, listo para armar un presupuesto.
+
+## Qué hace
+
+- Sube un archivo G-code (soporta PrusaSlicer, OrcaSlicer, Cura, Bambu Studio y Simplify3D)
+- Detecta automáticamente el slicer usado y extrae tiempo de impresión + gramaje de filamento
+- Matchea la impresora/filamento detectado contra el catálogo cargado por el usuario
+- Calcula el costo (material + tiempo + margen) y genera un PDF de presupuesto
+- Gestión de clientes, impresoras y materiales por cuenta, con aislamiento multi-tenant real vía Row Level Security de Postgres
+
+## Stack
+
+- Next.js 16 (App Router) + React 19 + TypeScript
+- Supabase (Postgres, Auth, Row Level Security)
+- Tailwind CSS v4 + shadcn/ui
+- Vitest + Testing Library + axe-core (accesibilidad)
+- Sentry (monitoreo), Resend (emails transaccionales), react-pdf (generación de PDFs), Serwist (PWA)
+
+## El núcleo: parser multi-slicer
+
+La parte más sólida del proyecto es el motor de parsing (`src/lib/gcode-parser.ts`, `gcode-matcher.ts`, `cost-calculator.ts`): funciones puras, sin dependencias externas, cubiertas con tests contra fixtures reales de G-code de los 5 slicers soportados (`src/lib/__tests__/fixtures/`).
+
+## Getting started
+
+```bash
+pnpm install
+cp .env.example .env.local   # completar con un proyecto de Supabase propio
+pnpm dev
+```
+
+Requiere un proyecto de Supabase (hay plan gratuito) con las migraciones de `supabase/migrations` aplicadas — ver la [guía de deployment](docs/DEPLOYMENT.md).
+
+## Tests
+
+```bash
+pnpm test
+```
 
 ## Docs
 
-- [Deployment guide (Vercel + env vars + lyrup.com domain)](docs/DEPLOYMENT.md)
-- [RLS smoke test runbook (2-user cross-tenant isolation)](docs/RLS_SMOKE_TEST.md)
+- [Deployment guide (Vercel + env vars + dominio)](docs/DEPLOYMENT.md)
+- [RLS smoke test runbook (aislamiento multi-tenant)](docs/RLS_SMOKE_TEST.md)
 - [Environment variables template](.env.example)
 
----
+## Estado actual y pendientes
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Proyecto personal en desarrollo activo, no es un producto cerrado:
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- El home del dashboard todavía es un placeholder ("Próximamente") — el flujo funcional completo es Cotizador → Materiales → Impresoras → Configuración → Clientes.
+- Los tests cubren la lógica de negocio (server actions, parser, cálculo de costos, generación de PDF) pero no las páginas/rutas en sí.
+- Depende de un proyecto de Supabase activo (Postgres + Auth + RLS) — no hay todavía un modo local/offline.
